@@ -46,9 +46,10 @@ def __Zone(board, points, track):
     if hasattr(pcbnew, 'ZONE_CONTAINER'): # kv5
         z = ZONE_CONTAINER(board)
         z.SetZoneClearance(track.GetClearance())
-    else: # kv6
+    else: # kv9
         z = ZONE(board)
-        z.SetLocalClearance(track.GetLocalClearance(track.GetClass()))
+        #z.SetLocalClearance(track.GetLocalClearance(track.GetClass()))
+        z.SetLocalClearance(0) # fix credit: MarwanOSayeds "TaperTool-Dev" branch on their forks
     # Add zone properties
     z.SetLayer(track.GetLayer())
     z.SetNetCode(track.GetNetCode())

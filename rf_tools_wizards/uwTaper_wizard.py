@@ -61,6 +61,9 @@ class uwTaper_wizard(FootprintWizardBase.FootprintWizard):
 
     # build a custom pad
     def smdCustomPolyPad(self, module, size, pos, name, vpoints, layer, solder_clearance):
+        # fix credit: MarwanOSayeds pr (#76) on the upstream repo
+        # cherry picking this is a temporary fix until their PR is merged
+
         if hasattr(pcbnew, 'D_PAD'):
             pad = D_PAD(module)
         else:
@@ -81,12 +84,15 @@ class uwTaper_wizard(FootprintWizardBase.FootprintWizard):
         #pad.SetOffset(pos)
         pad.SetPadName(name)
         #pad.Rotate(pos, angle)
-        pad.SetAnchorPadShape(PAD_SHAPE_RECT) #PAD_SHAPE_CIRCLE) #PAD_SHAPE_RECT)
+        pad.SetAnchorPadShape(layer, PAD_SHAPE_RECT) #PAD_SHAPE_CIRCLE) #PAD_SHAPE_RECT)
         if solder_clearance > 0:
             pad.SetLocalSolderMaskMargin(solder_clearance)
             pad.SetLayerSet(pad.ConnSMDMask())
         else:
-            pad.SetLayerSet( LSET(layer) )
+            layer_set_nonexposed=LSET()
+            layer_set_nonexposed.addLayer(layer)
+            pad.SetLayerSet(layer_set_nonexposed)
+            #pad.SetLayerSet(LSET(base_seqVect(layer))) 
         
         if hasattr(pcbnew, 'D_PAD'): # kv5
             pad.AddPrimitive(vpoints,0) # (size[0]))
@@ -94,7 +100,7 @@ class uwTaper_wizard(FootprintWizardBase.FootprintWizard):
             if hasattr(pcbnew, 'EDA_RECT'): # kv5,kv6
                 pad.AddPrimitivePoly(vpoints, 0, True) # (size[0]))
             else: # kv7
-                pad.AddPrimitivePoly(pcbnew.VECTOR_VECTOR2I(vpoints), 0, True) # (size[0]))
+                pad.AddPrimitivePoly(layer,pcbnew.VECTOR_VECTOR2I(vpoints), 0, True) # (size[0]))
         return pad
 
     def smdPad(self,module,size,pos,name,ptype,angle_D,layer,solder_clearance,offs=None):
@@ -110,7 +116,10 @@ class uwTaper_wizard(FootprintWizardBase.FootprintWizard):
             pad.SetLocalSolderMaskMargin(solder_clearance)
             pad.SetLayerSet(pad.ConnSMDMask())
         else:
-            pad.SetLayerSet( LSET(layer) )
+            layer_set_nonexposed=LSET()
+            layer_set_nonexposed.addLayer(layer)
+            pad.SetLayerSet(layer_set_nonexposed)
+            #pad.SetLayerSet( LSET(base_seqVect(layer)) )
         #pad.SetDrillSize (0.)
         #pad.SetLayerSet(pad.ConnSMDMask())
         # pad.SetPos0(pos)
