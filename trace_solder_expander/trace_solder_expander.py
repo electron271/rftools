@@ -53,8 +53,10 @@ def wxLogDebug(msg,show):
         wx.LogMessage(msg)
 #
 def find_pcbnew_w():
-    windows = wx.GetTopLevelWindows()
+    windows = list(wx.GetTopLevelWindows())
     pcbneww = [w for w in windows if "pcbnew" in w.GetTitle().lower()]
+    
+
     if len(pcbneww) != 1:
         return None
     return pcbneww[0]
