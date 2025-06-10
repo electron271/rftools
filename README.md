@@ -9,5 +9,6 @@ Keep in mind that I am mainly using this for personal use, issues may occur in y
 
 ## Planned Changes
 - [x] Fix WindowList_iterator issue
+- [ ] Fix taper issue
 - [ ] Convert to Poetry project
 - [ ] Refactor code
